@@ -59,6 +59,7 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
 import org.fcrepo.server.security.jaas.auth.UserPrincipal;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
