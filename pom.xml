@@ -1,12 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
-		<artifactId>fcrepo</artifactId>
+		<artifactId>fcrepo-security</artifactId>
 		<groupId>org.fcrepo</groupId>
-		<version>3.4.1</version>
+		<version>3.4.2</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>fcrepo-drupalfilter</artifactId>
-	<packaging>jar</packaging>
+	<artifactId>fcrepo-drupalauthfilter</artifactId>
 	<name>Islandora Drupal Servlet Filters</name>
 	<build>
 		<plugins>
@@ -21,12 +20,12 @@
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>fcrepo-common</artifactId>
-      <version>3.4.1</version>
+      <version>3.4.2</version>
     </dependency>
     <dependency>
     	<groupId>org.fcrepo</groupId>
     	<artifactId>fcrepo-security-jaas</artifactId>
-    	<version>3.4.1</version>
+    	<version>3.4.2</version>
     	<scope>compile</scope>
     </dependency>
     <dependency>
@@ -45,13 +44,13 @@
     <dependency>
     	<groupId>org.fcrepo</groupId>
     	<artifactId>fcrepo-security</artifactId>
-    	<version>3.4.1</version>
+    	<version>3.4.2</version>
     	<type>pom</type>
     </dependency>
     <dependency>
     	<groupId>org.fcrepo</groupId>
     	<artifactId>fcrepo-server</artifactId>
-    	<version>3.4.1</version>
+    	<version>3.4.2</version>
     </dependency>
     <dependency>
     	<groupId>javax.servlet</groupId>

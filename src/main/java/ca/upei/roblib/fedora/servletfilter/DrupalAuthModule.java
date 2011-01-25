@@ -241,7 +241,8 @@ public class DrupalAuthModule
     }
 
     void findUser(String userid, String password) {
-        String server, database, user, pass, port, sql;
+    	logger.info("login module findUser");
+    	String server, database, user, pass, port, sql;
         //we may want to implement a connection pool or something here if performance gets to be
         //an issue.  on the plus side mysql connections are fairly lightweight compared to postgres
         //and the database only gets hit once per user session so we may be ok.
