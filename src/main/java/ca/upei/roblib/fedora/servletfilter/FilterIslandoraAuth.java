@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.FilterConfig;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -37,7 +37,7 @@ public class FilterIslandoraAuth extends BaseCaching {
 	private Set<String> djatokaIPs;
 	private String djatokaURIPattern;
 	private Set<String> djatokaRoles; 
-         protected static Log log = LogFactory.getLog(FilterDrupal.class);
+         protected static Logger log = LoggerFactory.getLogger(FilterDrupal.class);
 	
 	static class Credentials {
 		String password;

@@ -19,8 +19,8 @@ import org.fcrepo.server.security.servletfilters.BaseCaching;
 //import fedora.server.security.servletfilters.CacheElement;
 import org.fcrepo.server.security.servletfilters.CacheElement;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class FilterDrupal extends BaseCaching
         implements Constants{
-    protected static Log log = LogFactory.getLog(FilterDrupal.class);
+    protected static Logger log = LoggerFactory.getLogger(FilterDrupal.class);
 
 
 
@@ -89,9 +89,9 @@ public class FilterDrupal extends BaseCaching
        
         if (log.isDebugEnabled()) {
             log.debug(format(method, null, "authenticated"));
-            log.debug(authenticated);
+            log.debug(authenticated.toString());
             log.debug(format(method, null, "namedAttributes"));
-            log.debug(namedAttributes);
+            log.debug(namedAttributes.toString());
             log.debug(format(method, null, "errorMessage", errorMessage));
         }
         cacheElement.populate(authenticated,

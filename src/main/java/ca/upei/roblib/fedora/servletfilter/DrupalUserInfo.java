@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+//import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -35,7 +35,7 @@ import org.dom4j.io.SAXReader;
  */
 class DrupalUserInfo {
 
-    protected static Log log = LogFactory.getLog(DrupalUserInfo.class);
+    protected static Logger log = LoggerFactory.getLogger(DrupalUserInfo.class);
     private String username = null;
     private String password = null;
     private Boolean authenticated = false;
@@ -154,8 +154,6 @@ class DrupalUserInfo {
                 }
             } catch (SQLException ex) {
                 log.error("Error retrieving user info "+ex.getMessage());
-                //Logger.getLogger(DrupalUserInfo.class.getName()).log(Level.SEVERE, null, ex);
-
             }
 
         }
