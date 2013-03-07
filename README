@@ -11,6 +11,11 @@ Anonymous Users
 ===============
 Fedora requires a username for the audit trail so we populate a username of anonymous for empty user names.
 
+Drupal Version
+==============
+
+The same version of the filter will work for both Drupal 6 and Drupal 7 Islandora installations.
+
 Building
 ========
 
