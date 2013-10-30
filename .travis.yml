@@ -1,0 +1,11 @@
+language: java
+jdk:
+  - openjdk6
+  - openjdk7
+  - oraclejdk7
+env:
+  - FEDORA_VERSION=3.6.2
+  - FEDORA_VERSION=3.7.0
+  - FEDORA_VERSION=3.7.1
+script:
+  - mvn test -Dfedora.version=$FEDORA_VERSION
