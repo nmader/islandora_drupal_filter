@@ -20,12 +20,12 @@
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>fcrepo-common</artifactId>
-      <version>3.6.2</version>
+      <version>${parent.version}</version>
     </dependency>
     <dependency>
     	<groupId>org.fcrepo</groupId>
     	<artifactId>fcrepo-security-jaas</artifactId>
-    	<version>3.6.2</version>
+    	<version>${parent.version}</version>
     	<scope>compile</scope>
     </dependency>
     <dependency>
@@ -44,19 +44,19 @@
     <dependency>
     	<groupId>org.fcrepo</groupId>
     	<artifactId>fcrepo-security</artifactId>
-    	<version>3.6.2</version>
+    	<version>${parent.version}</version>
     	<type>pom</type>
     </dependency>
     <dependency>
     	<groupId>org.fcrepo</groupId>
     	<artifactId>fcrepo-server</artifactId>
-    	<version>3.6.2</version>
+    	<version>${parent.version}</version>
     </dependency>
     <dependency>
     	<groupId>javax.servlet</groupId>
     	<artifactId>servlet-api</artifactId>
     	<version>2.5</version>
-    </dependency>    
+    </dependency>
   </dependencies>
   <modules>
   </modules>
