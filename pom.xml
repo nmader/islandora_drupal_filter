@@ -1,12 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<parent>
-		<artifactId>fcrepo-security</artifactId>
-		<groupId>org.fcrepo</groupId>
-		<version>3.6.2</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
+    <groupId>ca.islandora</groupId>
 	<artifactId>fcrepo-drupalauthfilter</artifactId>
 	<name>Islandora Drupal Servlet Filters</name>
+    <version>${fedora.version}</version>
+	<modelVersion>4.0.0</modelVersion>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -16,16 +14,17 @@
 			</plugin>
 		</plugins>
 	</build>
+
 	<dependencies>
     <dependency>
       <groupId>org.fcrepo</groupId>
       <artifactId>fcrepo-common</artifactId>
-      <version>${parent.version}</version>
+      <version>${fedora.version}</version>
     </dependency>
     <dependency>
     	<groupId>org.fcrepo</groupId>
     	<artifactId>fcrepo-security-jaas</artifactId>
-    	<version>${parent.version}</version>
+    	<version>${fedora.version}</version>
     	<scope>compile</scope>
     </dependency>
     <dependency>
@@ -44,13 +43,13 @@
     <dependency>
     	<groupId>org.fcrepo</groupId>
     	<artifactId>fcrepo-security</artifactId>
-    	<version>${parent.version}</version>
+    	<version>${fedora.version}</version>
     	<type>pom</type>
     </dependency>
     <dependency>
     	<groupId>org.fcrepo</groupId>
     	<artifactId>fcrepo-server</artifactId>
-    	<version>${parent.version}</version>
+    	<version>${fedora.version}</version>
     </dependency>
     <dependency>
     	<groupId>javax.servlet</groupId>
@@ -58,6 +57,30 @@
     	<version>2.5</version>
     </dependency>
   </dependencies>
-  <modules>
-  </modules>
+
+  <profiles>
+    <profile>
+      <id>fedora-version-default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <fedora.version>3.6.2</fedora.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>fedora-version-specified</id>
+      <activation>
+        <property>
+          <name>fedora.version</name>
+        </property>
+      </activation>
+    </profile>
+  </profiles>
+
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
 </project>
