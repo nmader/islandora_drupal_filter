@@ -32,8 +32,10 @@ package ca.upei.roblib.fedora.servletfilter;
 
 import org.fcrepo.common.Constants;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.File;
+import java.io.InputStream;
 
 import java.sql.PreparedStatement;
 import java.sql.Connection;
@@ -43,7 +45,6 @@ import java.sql.SQLException;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -136,7 +137,7 @@ public class DrupalAuthModule
                     ((PasswordCallback) callbacks[1]).getPassword();
             String password = new String(passwordCharArray);
 
-	    this.findUser(username,password);
+	        findUser(username, password);
 
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -201,7 +202,7 @@ public class DrupalAuthModule
         return true;
     }
 
-    private Connection connectToDB(String server, String database, String user, String pass, String port, String jdbcDriverClass, String jdbcURLProtocol) {
+    protected Connection connectToDB(String server, String database, String user, String pass, String port, String jdbcDriverClass, String jdbcURLProtocol) {
         //assuming all drupal installs use mysql as the db.
         Connection conn = null;
         if (port == null) {
@@ -237,13 +238,35 @@ public class DrupalAuthModule
         return conn;
     }
 
+    protected InputStream getConfig() throws IOException {
+        String fedoraHome = Constants.FEDORA_HOME;
+        if (fedoraHome == null) {
+            logger.warn("FEDORA_HOME not set; unable to initialize");
+        }
+
+        File file =  new File(fedoraHome, "server/config/filter-drupal.xml");
+        return new FileInputStream(file);
+    }
+    
+    protected Document getParsedConfig() throws DocumentException, IOException {
+    	SAXReader reader = new SAXReader();
+        Document document = reader.read(getConfig());
+        return document;
+    }
+    
+    /**
+     * @deprecated
+     * @param file
+     * @return
+     * @throws DocumentException
+     */
     public Document parse(File file) throws DocumentException {
         SAXReader reader = new SAXReader();
         Document document = reader.read(file);
         return document;
     }
 
-    void findUser(String userid, String password) {
+    protected void findUser(String userid, String password) {
     	logger.info("login module findUser");
     	String server, database, user, pass, port, jdbcDriverClass, jdbcURLProtocol, sql;
         //we may want to implement a connection pool or something here if performance gets to be
@@ -256,29 +279,27 @@ public class DrupalAuthModule
             createAnonymousUser();
             return;
         }
-        String fedoraHome = Constants.FEDORA_HOME;
-        if (fedoraHome == null) {
-            logger.warn("FEDORA_HOME not set; unable to initialize");
-        } else {
-            drupalConnectionInfo = new File(fedoraHome, "server/config/filter-drupal.xml");
-        }
-        if (drupalConnectionInfo == null) {
-            logger.error("Could not parse drupal filter xml file.");
 
-        }
         Document filterDoc = null;
         try {
-            filterDoc = parse(drupalConnectionInfo);
-        } catch (DocumentException ex) {
-            logger.error("Could not parse Drupal Servlet Filter Config file.");
-
+        	filterDoc = getParsedConfig();
         }
-        List list = filterDoc.selectNodes("//FilterDrupal_Connection/connection");
-        Iterator iter = list.iterator();
+        catch (DocumentException e) {
+        	logger.error("Failed to parse the configuration XML.");
+        	return;
+        }
+        catch (IOException e) {
+        	logger.error("Failed to load the configuration XML.");
+        	return;
+        }
+        
+        @SuppressWarnings("unchecked")
+		List<Element> list = filterDoc.selectNodes("//FilterDrupal_Connection/connection");
+        Iterator<Element> iter = list.iterator();
 
         while (iter.hasNext()) {
             try {
-                Element connection = (Element) iter.next();
+                Element connection = iter.next();
                 server = connection.attributeValue("server");
                 database = connection.attributeValue("dbname");
                 user = connection.attributeValue("user");
@@ -331,7 +352,7 @@ public class DrupalAuthModule
     }
 
 
-    private void createAnonymousUser() {
+    protected void createAnonymousUser() {
         this.username = "anonymous";
         this.password = "anonymous";
         attributeValues = new HashSet<String>();
@@ -343,10 +364,5 @@ public class DrupalAuthModule
         successLogin = true;
 
     }
-
-
-
-
-
 
 }
