@@ -1,7 +1,13 @@
 package ca.upei.roblib.fedora.servletfilter;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.UnsupportedCallbackException;
 
 import junit.framework.TestCase;
 
@@ -11,7 +17,8 @@ public class DrupalAuthModuleTest extends TestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		
-	    mockInstance = new DrupalAuthModuleMock(this.getClass().getResourceAsStream("filter-drupal.xml"));	
+	    mockInstance = new DrupalAuthModuleMock(this.getClass().getResourceAsStream("filter-drupal.xml"));
+	    mockInstance.initialize(new Subject(), new MockHandler(), new HashMap(), new HashMap());
 	}
 	
 	public void testFindUserUserOneHasAdministratorRole() {
@@ -45,5 +52,12 @@ public class DrupalAuthModuleTest extends TestCase {
 		
 		mockInstance.findUser("bravo", "second role");
 		assertTrue("Bravo has proper role", mockInstance.attributeValues.contains("second role"));
+	}
+	
+	private class MockHandler implements CallbackHandler {
+		public void handle(Callback[] callbacks) throws IOException,
+				UnsupportedCallbackException {
+			// No-op
+		}
 	}
 }
