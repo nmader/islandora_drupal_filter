@@ -39,6 +39,7 @@ public class DrupalAuthModuleTest extends TestCase {
 		
 		for (String key: users.keySet()) {
 			mockInstance = new DrupalAuthModuleMock();
+			mockInstance.initialize(new Subject(), new MockHandler(), new HashMap(), new HashMap());
 			mockInstance.findUser(key, users.get(key));
 			mockInstance.attributeValues.contains("authenticated user");
 		}
