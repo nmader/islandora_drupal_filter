@@ -17,7 +17,7 @@ public class DrupalAuthModuleTest extends TestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		
-	    mockInstance = new DrupalAuthModuleMock(this.getClass().getResourceAsStream("filter-drupal.xml"));
+	    mockInstance = new DrupalAuthModuleMock(this.getClass().getResourceAsStream("/filter-drupal.xml"));
 	    mockInstance.initialize(new Subject(), new MockHandler(), new HashMap(), new HashMap());
 	}
 	

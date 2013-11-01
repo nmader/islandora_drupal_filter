@@ -9,14 +9,14 @@ INSERT INTO users (uid, name, pass) VALUES (2, 'bravo', 'second');
 INSERT INTO users (uid, name, pass) VALUES (3, 'charlie', 'third');
 
 
-CREATE TABLE user_roles (
+CREATE TABLE users_roles (
   uid int,
   rid int
 );
-INSERT INTO user_roles (uid, rid) VALUES (1, 0);
-INSERT INTO user_roles (uid, rid) VALUES (1, 1);
-INSERT INTO user_roles (uid, rid) VALUES (1, 2);
-INSERT INTO user_roles (uid, rid) VALUES (2, 1);
+INSERT INTO users_roles (uid, rid) VALUES (1, 0);
+INSERT INTO users_roles (uid, rid) VALUES (1, 1);
+INSERT INTO users_roles (uid, rid) VALUES (1, 2);
+INSERT INTO users_roles (uid, rid) VALUES (2, 1);
 
 
 CREATE TABLE role (
