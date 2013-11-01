@@ -382,7 +382,8 @@ public class DrupalAuthModule
                             attributeValues.add("anonymous");
                         } else if (numericId == 1) {
                             attributeValues.add("administrator");
-                        } else {
+                        }
+                        if (numericId > 0) {
                             attributeValues.add("authenticated user");
                         }
                         successLogin = true;
