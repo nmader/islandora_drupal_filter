@@ -206,6 +206,7 @@
 	              <goal>execute</goal>
 	            </goals>
 	            <configuration>
+  	              <url>${db.scheme}://${db.server}:${db.port}</url>
 	              <autocommit>true</autocommit>
 	              <sqlCommand>DROP DATABASE ${db.name};</sqlCommand>
 	            </configuration>
