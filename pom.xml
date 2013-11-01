@@ -51,14 +51,14 @@
       <artifactId>fcrepo-common</artifactId>
       <version>${fedora.version}</version>
       <type>pom</type>
-    	<scope>provided</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
     	<groupId>org.fcrepo</groupId>
     	<artifactId>fcrepo-security-jaas</artifactId>
     	<version>${fedora.version}</version>
-    	<type>pom</type>
-    	<scope>provided</scope>
+    	<type>jar</type>
+        <scope>provided</scope>
     </dependency>
     <dependency>
     	<groupId>com.cenqua.clover</groupId>
@@ -78,13 +78,12 @@
     	<artifactId>fcrepo-security</artifactId>
     	<version>${fedora.version}</version>
     	<type>pom</type>
-    	<scope>provided</scope>
     </dependency>
     <dependency>
     	<groupId>org.fcrepo</groupId>
     	<artifactId>fcrepo-server</artifactId>
     	<version>${fedora.version}</version>
-    	<scope>provided</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
     	<groupId>javax.servlet</groupId>
@@ -146,7 +145,7 @@
 	        <!-- common configuration shared by all executions -->
 	        <configuration>
 	          <driver>${db.class}</driver>
-	          <url>${db.scheme}://${db.server}:${db.port}:${db.name}</url>
+	          <url>${db.scheme}://${db.server}:${db.port}/${db.name}</url>
 	          <username>${db.user}</username>
 	          <password>${db.pass}</password>
 	          <settingsKey>sensibleKey</settingsKey>
@@ -178,10 +177,10 @@
 	              <goal>execute</goal>
 	            </goals>
 	            <configuration>
-	              <url>${db.scheme}://${db.server}:${db.port}:${db.name}</url>
+	              <url>${db.scheme}://${db.server}:${db.port}</url>
 	              <!-- no transaction -->
 	              <autocommit>true</autocommit>
-	              <sqlCommand>CREATE DB ${db.name};</sqlCommand>
+	              <sqlCommand>CREATE DATABASE ${db.name};</sqlCommand>
 	            </configuration>
 	          </execution>
 	
