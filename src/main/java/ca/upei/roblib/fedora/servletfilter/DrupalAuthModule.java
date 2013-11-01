@@ -73,27 +73,27 @@ import org.dom4j.io.SAXReader;
 public class DrupalAuthModule
         implements LoginModule {
 
-    private static final Logger logger =
+    protected static final Logger logger =
             LoggerFactory.getLogger(DrupalAuthModule.class);
 
-    private Subject subject = null;
+    protected Subject subject = null;
 
-    private CallbackHandler handler = null;
+    protected CallbackHandler handler = null;
 
-    private Map<String, ?> sharedState = null;
+    protected Map<String, ?> sharedState = null;
 
-    private Map<String, ?> options = null;
+    protected Map<String, ?> options = null;
 
-    private String username = null;
+    protected String username = null;
     
-    private Set<String> attributeValues = null;
-    private Map<String, Set<String>> attributes = null;
+    protected Set<String> attributeValues = null;
+    protected Map<String, Set<String>> attributes = null;
 
-    private final static String ANONYMOUSROLE = "anonymous user";
+    protected final static String ANONYMOUSROLE = "anonymous user";
 
-    private boolean debug = false;
+    protected boolean debug = false;
 
-    private boolean successLogin = false;
+    protected boolean successLogin = false;
 
     public void initialize(Subject subject,
                            CallbackHandler handler,
