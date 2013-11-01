@@ -11,5 +11,5 @@ env:
   - FEDORA_VERSION=3.7.0
   - FEDORA_VERSION=3.7.1
 script:
-  - mvn test -DskipTests=false -Dfedora.version=$FEDORA_VERSION -Ddb.name=drupal_test -Ddb.user=travis -Ddb.pass=""
-  - mvn test -DskipTests=false -Dfedora.version=$FEDORA_VERSION -Ddb.name=drupal_test -Ddb.user=postgres -Ddb.pass="" -Ddb.port=5432 -Ddb.class=org.postgresql.Driver -Ddb.scheme=jdbc:postgresql
+  - mvn clean test -DskipTests=false -Dfedora.version=$FEDORA_VERSION -Ddb.name=drupal_test -Ddb.user=travis -Ddb.pass=""
+  - mvn clean test -DskipTests=false -Dfedora.version=$FEDORA_VERSION -Ddb.name=drupal_test -Ddb.user=postgres -Ddb.pass="" -Ddb.port=5432 -Ddb.class="org.postgresql.Driver" -Ddb.scheme="jdbc:postgresql"
