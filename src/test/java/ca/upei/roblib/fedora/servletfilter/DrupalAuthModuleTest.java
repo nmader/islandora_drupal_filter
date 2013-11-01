@@ -38,26 +38,32 @@ public class DrupalAuthModuleTest extends TestCase {
 		users.put("charlie", "third");
 		
 		for (String key: users.keySet()) {
+			mockInstance = new DrupalAuthModuleMock();
 			mockInstance.findUser(key, users.get(key));
-			assertTrue("Has the \"authenticated user\" role", mockInstance.attributeValues.contains("authenticated user"));
+			mockInstance.attributeValues.contains("authenticated user");
 		}
 	}
 	
-	public void testFindUserConfiguredRoles() {
+	public void testFindUserAlphaConfiguredRoles() {
 		mockInstance.findUser("alpha", "first");
 		assertTrue("Alpha has proper roles", (
 				mockInstance.attributeValues.contains("first role") && 
 				mockInstance.attributeValues.contains("second role") &&
 				mockInstance.attributeValues.contains("third role")));
+	}
 		
+	public void testFindUserBravoConfiguredRoles() {
 		mockInstance.findUser("bravo", "second");
 		assertTrue("Bravo has proper roles", (
 				!mockInstance.attributeValues.contains("first role") &&
 				mockInstance.attributeValues.contains("second role") &&
 				!mockInstance.attributeValues.contains("third role")));
+	}
 		
+	public void testFindUserCharlieConfiguredRoles() {
 		mockInstance.findUser("charlie", "third");
 		assertTrue("Charlie has proper roles", (
+				mockInstance.attributeValues.contains("authenticated user") &&
 				!mockInstance.attributeValues.contains("first role") &&
 				!mockInstance.attributeValues.contains("second role") &&
 				!mockInstance.attributeValues.contains("third role")));
