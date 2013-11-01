@@ -7,5 +7,9 @@ env:
   - FEDORA_VERSION=3.6.2
   - FEDORA_VERSION=3.7.0
   - FEDORA_VERSION=3.7.1
+before_script:
+  - mysql -e 'CREATE DATABASE drupal_test;'
+  - psql -c 'CREATE DATABASE drupal_test;' -U postgres
 script:
-  - mvn test -Dfedora.version=$FEDORA_VERSION
+  - mvn test -DskipTests=false -Dfedora.version=$FEDORA_VERSION -Ddb.name=drupal_test -Ddb.user=travis -Ddb.pass
+  - mvn test -DskipTests=false -Dfedora.version=$FEDORA_VERSION -Ddb.name=drupal_test -Ddb.user=postgres -Ddb.pass -Ddb.port=5432 -Ddb.class=org.postgresql.Driver -Ddb.scheme=jdbc:postgresql
