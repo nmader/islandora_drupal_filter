@@ -21,13 +21,17 @@ Building
 
 This project uses Maven and specifies Fedora as a dependency.  To build the servlet filter simply run the command:
 
-$ mvn package
+    mvn package
+
+To build for a specific version of Fedora, the `fedora.version` parameter can be passed (defaults to 3.6.2), so to build for Fedora 3.7.1, you could call:
+
+    mvn package -Dfedora.version=3.7.1
 
 This can take a few minutes as Maven will need to download and build Fedora before it can build the Drupal filter.
 
 To remove traces of the build process, run:
 
-$ mvn clean
+    mvn clean
 
-The target/ directory is in the .gitignore file as it is bad practise to check binary files into Git that are created with a build process.
+The `target/` directory is in the `.gitignore` file as it is bad practise to check binary files into Git that are created with a build process.
 
