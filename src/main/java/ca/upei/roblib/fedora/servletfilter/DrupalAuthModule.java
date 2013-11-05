@@ -32,8 +32,10 @@ package ca.upei.roblib.fedora.servletfilter;
 
 import org.fcrepo.common.Constants;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.File;
+import java.io.InputStream;
 
 import java.sql.PreparedStatement;
 import java.sql.Connection;
@@ -43,7 +45,6 @@ import java.sql.SQLException;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -72,28 +73,27 @@ import org.dom4j.io.SAXReader;
 public class DrupalAuthModule
         implements LoginModule {
 
-    private static final Logger logger =
+    protected static final Logger logger =
             LoggerFactory.getLogger(DrupalAuthModule.class);
 
-    private Subject subject = null;
+    protected Subject subject = null;
 
-    private CallbackHandler handler = null;
+    protected CallbackHandler handler = null;
 
-    private Map<String, ?> sharedState = null;
+    protected Map<String, ?> sharedState = null;
 
-    private Map<String, ?> options = null;
+    protected Map<String, ?> options = null;
 
-    private String username = null;
-    private String password = null;
+    protected String username = null;
+    
+    protected Set<String> attributeValues = null;
+    protected Map<String, Set<String>> attributes = null;
 
-    private Set<String> attributeValues = null;
-    private Map<String, Set<String>> attributes = null;
+    protected final static String ANONYMOUSROLE = "anonymous user";
 
-    private final static String ANONYMOUSROLE = "anonymous user";
+    protected boolean debug = false;
 
-    private boolean debug = false;
-
-    private boolean successLogin = false;
+    protected boolean successLogin = false;
 
     public void initialize(Subject subject,
                            CallbackHandler handler,
@@ -136,7 +136,7 @@ public class DrupalAuthModule
                     ((PasswordCallback) callbacks[1]).getPassword();
             String password = new String(passwordCharArray);
 
-	    this.findUser(username,password);
+	        findUser(username, password);
 
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -201,87 +201,172 @@ public class DrupalAuthModule
         return true;
     }
 
-    private Connection connectToDB(String server, String database, String user, String pass, String port) {
+    /**
+     * @deprecated
+     *   Use separate function to parse connection XML element to a Map<String, String>.
+     * @param server
+     * @param database
+     * @param user
+     * @param pass
+     * @param port
+     * @param jdbcDriverClass
+     * @param jdbcURLProtocol
+     * @return
+     */
+    protected Connection connectToDB(String server, String database, String user, String pass, String port, String jdbcDriverClass, String jdbcURLProtocol) {
+    	HashMap<String, String> settings = new HashMap<String, String>();
+    	settings.put("server", server);
+    	settings.put("database", database);
+    	settings.put("user", user);
+    	settings.put("pass", pass);
+    	settings.put("port", server);
+    	settings.put("jdbcDriverClass", jdbcDriverClass);
+    	settings.put("jdbcURLProtocol", jdbcURLProtocol);
+    	return connectToDB(settings);
+    }
+    protected Connection connectToDB(Map<String, String> settings) {
         //assuming all drupal installs use mysql as the db.
-        if (port == null) {
-            port = "3306";
-        }
         Connection conn = null;
+        if (settings.get("port") == null) {
+          settings.put("port", "3306");
+        }
+        
+        if (settings.get("jdbcDriverClass") == null) {
+            settings.put("jdbcDriverClass", "com.mysql.jdbc.Driver");
+        }
+        
+        if (settings.get("jdbcURLProtocol") == null) {
+            settings.put("jdbcURLProtocol", "jdbc:mysql");
+        }
+        
+        String jdbcURL = settings.get("jdbcURLProtocol") + "://" +
+        	settings.get("server") + ":" + settings.get("port") + "/" +
+        	settings.get("database") + "?" + "user=" + settings.get("user") +
+        	"&password=" + settings.get("pass");
+        
         try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            Class.forName(settings.get("jdbcDriverClass")).newInstance();
         } catch (Exception ex) {
             logger.error("Exception: " + ex.getMessage());
-
         }
 
         try {
-            conn =
-                    DriverManager.getConnection("jdbc:mysql://" + server + ":" + port + "/" + database + "?" +
-                    "user=" + user + "&password=" + pass);
-
+            conn = DriverManager.getConnection(jdbcURL);
         } catch (SQLException ex) {
             // handle any errors
             logger.error("SQLException: " + ex.getMessage());
             logger.error("SQLState: " + ex.getSQLState());
             logger.error("VendorError: " + ex.getErrorCode());
-            logger.error("Error Connecting to Database server " + server + " port " + port + " database " + database);
+            logger.error("Error Connecting to Database server " + jdbcURL);
             return null;
         }
         return conn;
     }
 
+    /**
+     * Get an InputStream containing the config XML.
+     * 
+     * @return
+     * @throws IOException
+     */
+    protected InputStream getConfig() throws IOException {
+        String fedoraHome = Constants.FEDORA_HOME;
+        if (fedoraHome == null) {
+            logger.warn("FEDORA_HOME not set; unable to initialize");
+        }
+
+        File file =  new File(fedoraHome, "server/config/filter-drupal.xml");
+        return new FileInputStream(file);
+    }
+    
+    /**
+     * Get the parsed XML.
+     * 
+     * @return
+     * @throws DocumentException
+     * @throws IOException
+     */
+    protected Document getParsedConfig() throws DocumentException, IOException {
+    	return getParsedConfig(getConfig());
+    }   
+    protected Document getParsedConfig(File file) throws DocumentException, IOException {
+    	return getParsedConfig(new FileInputStream(file));
+    }
+    protected Document getParsedConfig(InputStream stream) throws DocumentException, IOException {
+    	SAXReader reader = new SAXReader();
+        Document document = reader.read(getConfig());
+        return document;
+    }
+    
+    /**
+     * @deprecated
+     *   This is only still here because it was public... Just in case.
+     * @param file
+     * @return
+     * @throws DocumentException
+     */
     public Document parse(File file) throws DocumentException {
         SAXReader reader = new SAXReader();
         Document document = reader.read(file);
         return document;
     }
+    
+    protected Map<String, String> parseConnectionElement(Element connection) {
+    	Map<String, String> toReturn = new HashMap<String, String>();
+        toReturn.put("server", connection.attributeValue("server"));
+        toReturn.put("database", connection.attributeValue("dbname"));
+        toReturn.put("user", connection.attributeValue("user"));
+        toReturn.put("pass", connection.attributeValue("password"));
+        toReturn.put("port", connection.attributeValue("port"));
+        toReturn.put("jdbcDriverClass", connection.attributeValue("jdbcDriverClass"));
+        toReturn.put("jdbcURLProtocol", connection.attributeValue("jdbcURLProtocol"));
+        Element sqlElement = connection.element("sql");
+        toReturn.put("sql", sqlElement.getTextTrim());
+        
+        return toReturn;
+    }
 
-    void findUser(String userid, String password) {
+    /**
+     * 
+     * @param userid
+     * @param password
+     */
+    protected void findUser(String userid, String password) {
     	logger.info("login module findUser");
-    	String server, database, user, pass, port, sql;
-        //we may want to implement a connection pool or something here if performance gets to be
-        //an issue.  on the plus side mysql connections are fairly lightweight compared to postgres
-        //and the database only gets hit once per user session so we may be ok.
-        File drupalConnectionInfo = null;
 
         // If the user is anonymous don't check the database just give the anonymous role.
         if ("anonymous".equals(userid) && "anonymous".equals(password)) {
             createAnonymousUser();
             return;
         }
-        String fedoraHome = Constants.FEDORA_HOME;
-        if (fedoraHome == null) {
-            logger.warn("FEDORA_HOME not set; unable to initialize");
-        } else {
-            drupalConnectionInfo = new File(fedoraHome, "server/config/filter-drupal.xml");
-        }
-        if (drupalConnectionInfo == null) {
-            logger.error("Could not parse drupal filter xml file.");
 
-        }
         Document filterDoc = null;
         try {
-            filterDoc = parse(drupalConnectionInfo);
-        } catch (DocumentException ex) {
-            logger.error("Could not parse Drupal Servlet Filter Config file.");
-
+        	filterDoc = getParsedConfig();
         }
-        List list = filterDoc.selectNodes("//FilterDrupal_Connection/connection");
-        Iterator iter = list.iterator();
+        catch (DocumentException e) {
+        	logger.error("Failed to parse the configuration XML.");
+        	return;
+        }
+        catch (IOException e) {
+        	logger.error("Failed to load the configuration XML.");
+        	return;
+        }
+        
+        @SuppressWarnings("unchecked")
+		List<Element> list = filterDoc.selectNodes("//FilterDrupal_Connection/connection");
+        Iterator<Element> iter = list.iterator();
 
         while (iter.hasNext()) {
             try {
-                Element connection = (Element) iter.next();
-                server = connection.attributeValue("server");
-                database = connection.attributeValue("dbname");
-                user = connection.attributeValue("user");
-                pass = connection.attributeValue("password");
-                port = connection.attributeValue("port");
-                Element sqlElement = connection.element("sql");
-                sql = sqlElement.getTextTrim();
-                Connection conn = connectToDB(server, database, user, pass, port);
+            	Map<String, String> parsed = parseConnectionElement(iter.next());
+                
+                //we may want to implement a connection pool or something here if performance gets to be
+                //an issue.  on the plus side mysql connections are fairly lightweight compared to postgres
+                //and the database only gets hit once per user session so we may be ok.
+                Connection conn = connectToDB(parsed);
                 if (conn != null) {
-                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    PreparedStatement pstmt = conn.prepareStatement(parsed.get("sql"));
                     pstmt.setString(2, password);
                     pstmt.setString(1, userid);
                     ResultSet rs = pstmt.executeQuery();
@@ -289,7 +374,6 @@ public class DrupalAuthModule
                     if (hasMoreRecords && attributeValues == null) {
                         username = userid;
                         int numericId = rs.getInt("userid");
-                        this.password = password;
                         attributeValues = new HashSet<String>();
                         if (numericId == 0) {
                             // Add the role anonymous in case user in drupal is not associated with any Drupal roles.
@@ -298,7 +382,8 @@ public class DrupalAuthModule
                             attributeValues.add("anonymous");
                         } else if (numericId == 1) {
                             attributeValues.add("administrator");
-                        } else {
+                        }
+                        if (numericId > 0) {
                             attributeValues.add("authenticated user");
                         }
                         successLogin = true;
@@ -321,10 +406,11 @@ public class DrupalAuthModule
 	  attributes.put("role", attributeValues);
     }
 
-
-    private void createAnonymousUser() {
+    /**
+     * Add in attributes for an anonymous user.
+     */
+    protected void createAnonymousUser() {
         this.username = "anonymous";
-        this.password = "anonymous";
         attributeValues = new HashSet<String>();
         // Add the role anonymous in case user in drupal is not associated with any Drupal roles.
         attributeValues.add(DrupalAuthModule.ANONYMOUSROLE);
@@ -334,10 +420,5 @@ public class DrupalAuthModule
         successLogin = true;
 
     }
-
-
-
-
-
 
 }
