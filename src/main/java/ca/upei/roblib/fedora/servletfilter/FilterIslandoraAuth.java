@@ -139,7 +139,7 @@ public class FilterIslandoraAuth extends BaseCaching {
 	}
 
 	private void populateCacheElementForServiceRequest(CacheElement cacheElement) {
-		Map<String, Set<String>> attributeMap = new HashMap<String, Set<String>>();
+		Map<String, Set<?>> attributeMap = new HashMap<String, Set<?>>();
 		attributeMap.put("fedoraRole", djatokaRoles);
 		cacheElement.populate(Boolean.TRUE, null, attributeMap, null);
 	}
