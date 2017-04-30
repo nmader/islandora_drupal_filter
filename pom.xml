@@ -3,20 +3,22 @@
     <groupId>ca.islandora</groupId>
     <artifactId>fcrepo-drupalauthfilter</artifactId>
     <name>Islandora Drupal Servlet Filters</name>
-    <version>${fedora.version}</version>
+    <version>7.1.10-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
-
     <properties>
         <skipTests>true</skipTests>
         <fedora.version>3.6.2</fedora.version>
     </properties>
-
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.3.1</version>
+                <configuration>
+                    <finalName>fcrepo-drupalauthfilter</finalName>
+                    <classifier>${fedora.version}</classifier>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -245,4 +247,12 @@
         <artifactId>oss-parent</artifactId>
         <version>7</version>
     </parent>
+
+    <repositories>
+        <repository>
+            <id>fast-md5</id>
+            <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
+        </repository>
+    </repositories>
+
 </project>
